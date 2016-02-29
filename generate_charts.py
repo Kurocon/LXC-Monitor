@@ -98,6 +98,7 @@ def send_mail(groups, recipients, baseurl):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "KuroNET LXC Monitor"
     msg['To'] = COMMASPACE.join(recipients)
+    msg['Frpm'] = def_fromAddress
 
     html = """\
     <body style="padding: 20px">
