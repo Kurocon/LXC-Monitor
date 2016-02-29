@@ -109,3 +109,6 @@ crashlytics-build.properties
 
 # Database file
 /lxc_monitor.db
+
+# Local configuration
+/config.py

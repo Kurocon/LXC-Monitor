@@ -2,6 +2,13 @@
 import sqlite3
 import argparse
 from time import time
+from sys import exit
+
+try:
+    from config import *
+except ImportError:
+    print("Could not load configuration, please copy config.py.default to config.py and set configuration options.")
+    exit(1)
 
 ################################################################################
 # "THE BEER-WARE LICENSE" (Revision 42):                                       #
@@ -9,14 +16,6 @@ from time import time
 # can do whatever you want with this stuff. If we meet some day, and you think #
 # this stuff is worth it, you can buy me a beer in return. Lennart Coopmans    #
 ################################################################################
-
-################################################################################
-# DEFAULT CONFIGURATION                                                        #
-################################################################################
-
-def_sqlitedb = "lxc_monitor.db"
-def_containers = ["container1", "container2"]
-
 
 ################################################################################
 # CODE - DON'T TOUCH UNLESS YOU KNOW WHAT YOU'RE DOING                         #
@@ -28,7 +27,7 @@ def collect_data(con, group, timestamp):
     mem_cache = 0
     mem_swap = 0
 
-    with open('/sys/fs/cgroup/memory/lxc/%s/memory.stat' % (group,), 'r') as f:
+    with open('%s%s/memory.stat' % (def_memory_cgroup_base_path, group), 'r') as f:
         lines = f.read().splitlines()
 
     for line in lines:
@@ -40,7 +39,7 @@ def collect_data(con, group, timestamp):
         elif data[0] == "total_swap":
             mem_swap = int(data[1])
 
-    with open('/sys/fs/cgroup/cpuacct/lxc/%s/cpuacct.usage' % (group,), 'r') as f:
+    with open('%s%s/cpuacct.usage' % (def_cpuacct_cgroup_base_path, group), 'r') as f:
         cpu_usage = int(f.readline())
 
     con.execute("""\

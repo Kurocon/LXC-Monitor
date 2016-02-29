@@ -8,6 +8,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.Utils import COMMASPACE
 from time import time
+from sys import exit
+
+try:
+    from config import *
+except ImportError:
+    print("Could not load configuration, please copy config.py.default to config.py and set configuration options.")
+    exit(1)
 
 ################################################################################
 # "THE BEER-WARE LICENSE" (Revision 42):                                       #
@@ -15,19 +22,6 @@ from time import time
 # can do whatever you want with this stuff. If we meet some day, and you think #
 # this stuff is worth it, you can buy me a beer in return. Lennart Coopmans    #
 ################################################################################
-
-################################################################################
-# DEFAULT CONFIGURATION                                                        #
-################################################################################
-
-def_sqlitedb = "lxc_monitor.db"
-def_folder = "/var/www/charts/"
-def_containers = ["container1", "container2"]
-def_baseURL = "http://lacerta.be/charts/"
-def_recipients = ["you@yourdomain"]
-def_fromAddress = "noreply"
-def_days = 7
-
 
 ################################################################################
 # CODE - DON'T TOUCH UNLESS YOU KNOW WHAT YOU'RE DOING                         #
@@ -102,7 +96,7 @@ def generate_cpu_chart(c, group, starttime, endtime, folder):
 
 def send_mail(groups, recipients, baseurl):
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Lacerta LXC Monitor"
+    msg['Subject'] = "KuroNET LXC Monitor"
     msg['To'] = COMMASPACE.join(recipients)
 
     html = """\
