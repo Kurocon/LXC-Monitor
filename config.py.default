@@ -1,5 +1,6 @@
 def_sqlitedb = "lxc_monitor.db"
 def_containers = ["container1", "container2"]
+def_serverName = "Server"
 
 def_folder = "/var/www/charts/"
 def_baseURL = "http://lacerta.be/charts/"

@@ -96,7 +96,7 @@ def generate_cpu_chart(c, group, starttime, endtime, folder):
 
 def send_mail(groups, recipients, baseurl):
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "KuroNET LXC Monitor"
+    msg['Subject'] = "KuroNET LXC Monitor for %s" % (def_serverName,)
     msg['To'] = COMMASPACE.join(recipients)
     msg['From'] = def_fromAddress
 
@@ -105,11 +105,11 @@ def send_mail(groups, recipients, baseurl):
     <div style="background-color: #2f2f2f; width: 720px; padding: 10px; margin-left: 20px;\
      font-family: 'Helvetica Neue', Helvetica, Arial, Geneva, sans-serif;">
     <div>
-    <div style="float: left"><a href="http://lacerta.be">
-    <img class="site-logo" src="http://lacerta.be/d7/custom/lacerta.png" alt="Lacerta"/>
+    <div style="float: left"><a href="http://kevinalberts.nl">
+    <img class="site-logo" src="http://junebug.kurocon.nl/ka_logo_lxcmon.png" alt="KevinAlberts.nl"/>
     </a>
     </div>
-    <h2 style="color: #FAFAFA; padding: 0; margin: 0; font-size: 1.8em">Lacerta</h2>
+    <h2 style="color: #FAFAFA; padding: 0; margin: 0; font-size: 1.8em">KuroNET</h2>
     <h3 style="color: #FAFAFA; padding: 0; margin: 0; font-size: .8em">LXC Monitoring</h3>
     </div>
     <div style="clear: both">
