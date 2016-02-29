@@ -182,7 +182,7 @@ def main():
     c.close()
 
     if args.mail:
-        send_mail(args.groups, args.recipients, args.baseurl)
+        send_mail(args.containers, args.recipients, args.baseurl)
 
 
 if __name__ == "__main__":
