@@ -134,7 +134,7 @@ def send_mail(groups, recipients, baseurl):
 
     part = MIMEText(html, 'html')
     msg.attach(part)
-    s = smtplib.SMTP('localhost')
+    s = smtplib.SMTP(def_smtp_server_address)
     s.sendmail(def_fromAddress, recipients, msg.as_string())
     s.quit()
 

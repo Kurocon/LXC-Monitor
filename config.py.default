@@ -9,3 +9,4 @@ def_days = 7
 
 def_memory_cgroup_base_path = "/sys/fs/cgroup/memory/lxc/"
 def_cpuacct_cgroup_base_path = "/sys/fs/cgroup/cpuacct/lxc/"
+def_smtp_server_address = "localhost"
