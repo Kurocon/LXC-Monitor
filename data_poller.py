@@ -1,4 +1,7 @@
 #!/usr/bin/python
+import sqlite3
+import argparse
+from time import time
 
 ################################################################################
 # "THE BEER-WARE LICENSE" (Revision 42):                                       #
@@ -11,43 +14,42 @@
 # DEFAULT CONFIGURATION                                                        #
 ################################################################################
 
-def_sqlitedb = "lxc_monitor.db";
+def_sqlitedb = "lxc_monitor.db"
 def_containers = ["container1", "container2"]
+
 
 ################################################################################
 # CODE - DON'T TOUCH UNLESS YOU KNOW WHAT YOU'RE DOING                         #
 ################################################################################
-import sqlite3
-import argparse
-from time import time
 
-def collecData(con, group, timestamp):
-        cpu_usage = 0
-        mem_rss = 0
-        mem_cache = 0
-        mem_swap = 0
 
-        with open('/cgroup/%s/memory.stat' % (group,), 'r') as f:
-                lines = f.read().splitlines()
+def collect_data(con, group, timestamp):
+    mem_rss = 0
+    mem_cache = 0
+    mem_swap = 0
 
-        for line in lines:
-                data = line.split()
-                if data[0] == "total_rss":
-                        mem_rss = int(data[1])
-                elif data[0] == "total_cache":
-                        mem_cache = int(data[1])
-                elif data[0] == "total_swap":
-                        mem_swap = int(data[1])
+    with open('/cgroup/%s/memory.stat' % (group,), 'r') as f:
+        lines = f.read().splitlines()
 
-        with open('/cgroup/%s/cpuacct.usage' % (group,), 'r') as f:
-                cpu_usage = int(f.readline())
+    for line in lines:
+        data = line.split()
+        if data[0] == "total_rss":
+            mem_rss = int(data[1])
+        elif data[0] == "total_cache":
+            mem_cache = int(data[1])
+        elif data[0] == "total_swap":
+            mem_swap = int(data[1])
 
-        con.execute("""\
+    with open('/cgroup/%s/cpuacct.usage' % (group,), 'r') as f:
+        cpu_usage = int(f.readline())
+
+    con.execute("""\
                 INSERT INTO data (name, time, cpu_usage, mem_rss, mem_cache, mem_swap)
-                VALUES (?,?,?,?,?,?)""", (group, timestamp, cpu_usage, mem_rss, mem_cache, mem_swap) )
+                VALUES (?,?,?,?,?,?)""", (group, timestamp, cpu_usage, mem_rss, mem_cache, mem_swap))
 
-def initDatabase(con):
-        con.execute("""\
+
+def init_database(con):
+    con.execute("""\
                 CREATE TABLE data (
                   name TEXT NOT NULL,
                   time INTEGER NOT NULL,
@@ -59,27 +61,29 @@ def initDatabase(con):
                 )
         """)
 
+
 def main():
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-db','--database', default=def_sqlitedb,
-                                 help="SQLite database file")
-        parser.add_argument('-c', '--containers', nargs='+', default=def_containers,
-                                 help="LXC Containers to create charts for")
-        parser.add_argument('--init', action='store_true',
-                                 help="Initialize the database")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-db', '--database', default=def_sqlitedb,
+                        help="SQLite database file")
+    parser.add_argument('-c', '--containers', nargs='+', default=def_containers,
+                        help="LXC Containers to create charts for")
+    parser.add_argument('--init', action='store_true',
+                        help="Initialize the database")
 
-        args = parser.parse_args()
+    args = parser.parse_args()
 
-        con = sqlite3.connect(args.database)
+    con = sqlite3.connect(args.database)
 
-        if args.init:
-                initDatabase(con)
-        else:
-                for group in args.containers:
-                        collecData(con, group, int(time()))
+    if args.init:
+        init_database(con)
+    else:
+        for group in args.containers:
+            collect_data(con, group, int(time()))
 
-        con.commit()
-        con.close()
+    con.commit()
+    con.close()
+
 
 if __name__ == "__main__":
-	main()
+    main()
