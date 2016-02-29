@@ -28,7 +28,7 @@ def collect_data(con, group, timestamp):
     mem_cache = 0
     mem_swap = 0
 
-    with open('/cgroup/%s/memory.stat' % (group,), 'r') as f:
+    with open('/sys/fs/cgroup/memory/lxc/%s/memory.stat' % (group,), 'r') as f:
         lines = f.read().splitlines()
 
     for line in lines:
@@ -40,7 +40,7 @@ def collect_data(con, group, timestamp):
         elif data[0] == "total_swap":
             mem_swap = int(data[1])
 
-    with open('/cgroup/%s/cpuacct.usage' % (group,), 'r') as f:
+    with open('/sys/fs/cgroup/cpuacct/lxc/%s/cpuacct.usage' % (group,), 'r') as f:
         cpu_usage = int(f.readline())
 
     con.execute("""\
